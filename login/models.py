@@ -2,7 +2,7 @@ from django.db import models
 
 class Teacher(models.Model):
     name = models.CharField(max_length=50)
-    address = moels.CharField(max_length=100)
+    address = models.CharField(max_length=100)
     department = models.CharField(max_length=20)
     roomNo = models.CharField(max_length=10)
     designation = models.CharField(max_length=20)
@@ -14,7 +14,7 @@ class Teacher(models.Model):
 
 class Student(models.Model):
     name = models.CharField(max_length=50)
-    address = moels.CharField(max_length=100)
+    address = models.CharField(max_length=100)
     phoneNo = models.BigIntegerField()
     email = models.EmailField()
     fathersName = models.CharField(max_length=50)
@@ -48,4 +48,5 @@ class Batch(models.Model):
     studentCount = models.BigIntegerField()
     subjectCount = models.BigIntegerField()
     cr = models.CharField(max_length=30)
+	#cr should have aid of students
     #How to handle Subject Names

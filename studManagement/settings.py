@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'login',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -51,6 +52,8 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'studManagement.urls'
+
+AUTH_USER_MODEL='login.Student'
 
 TEMPLATES = [
     {

@@ -245,3 +245,17 @@ class Batch(AbstractBaseUser):
         # Handle whether the user is a member of staff?"
         return self.is_admin
     #How to handle Subject Names
+
+class RequestMiddleware(object):
+    def process_request(self,request):
+        agent = request.POST['agent']
+        if agent == 'Student':
+            settings.AUTH_USER_MODEL='login.Student'
+        elif agent == 'Teacher':
+            settings.AUTH_USER_MODEL='login.Teacher'
+        elif agent == 'Assignment':
+            settings.AUTH_USER_MODEL='login.Assignemnt'
+        elif agent == 'TimeTable':
+            settings.AUTH_USER_MODEL='login.TimeTable'
+        elif agent == 'Batch':
+            settings.AUTH_USER_MODEL='login.Batch'

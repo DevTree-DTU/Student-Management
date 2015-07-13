@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth import authenticate, login, get_user_model
 
 def saveStudent(request):
     s = Student()
@@ -34,3 +35,19 @@ def saveTeacher(request):
     response = HttpResponse("Teacher Saved")
     response["Access-Control-Allow-Origin"] = "*"
     return response
+
+def login_user(request):
+    username = password = ''
+    if request.POST:
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(username=username,password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                print('Login Successfull')
+            else:
+                print('Login Unsuccessful')
+        else:
+            print('Username/Password do not match')

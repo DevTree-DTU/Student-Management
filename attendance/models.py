@@ -3,11 +3,11 @@ from login.models import Teacher, Student,Batch
 #import subjects
 
 # Create your models here.
-class attendance(models.Model):
-    studentId = models.ForeignKey(Student,db_index=True)  #indexing is on for studentId
-    batchId = models.ForeignKey()  #indexing is on for batchId
-    subjectId= models.ForeignKey(Subject)
-    teacherId = models.ForeignKey(Teacher)
+class Attendance(models.Model):
+    studentID = models.ForeignKey(Student,db_index=True)  #indexing is on for studentId
+    batchID = models.ForeignKey()  #indexing is on for batchId
+    subjectID= models.ForeignKey(Subject)
+    teacherID = models.ForeignKey(Teacher)
     date=models.DateField()
     presentPoints=models.IntegerField()
     attendanceWeight=models.IntegerField()

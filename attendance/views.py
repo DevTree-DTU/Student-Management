@@ -34,15 +34,17 @@ def home(request):
             subWisePercent['monthlyPercentage']=percentages[0]
             subWisePercent['TotalPercentage']=percentages[1]
             responseArray.append(subWisePercent)
+    #elif teacher
+        #to show teachers time table. Send whic classes attendance is done and whose is left.
 
-        response = HttpResponse(json.dumps(responseArray), content_type="application/json")
-        response["Access-Control-Allow-Origin"] = "*"
-        response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-        response["Access-Control-Max-Age"] = "1000"
-        response["Access-Control-Allow-Headers"] = "*"
-        return response
+    response = HttpResponse(json.dumps(responseArray), content_type="application/json")
+    response["Access-Control-Allow-Origin"] = "*"
+    response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+    response["Access-Control-Max-Age"] = "1000"
+    response["Access-Control-Allow-Headers"] = "*"
+    return response
 
-def studentPercentage(request):
+def subjectPage(request):
     pass
 
 def rollCallForBatch(request):

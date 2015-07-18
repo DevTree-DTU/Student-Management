@@ -1,11 +1,8 @@
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render
 from django.contrib.auth import authenticate, login, get_user_model
-from django.http import HttpResponse
-from login.models import Student, Teacher
+
 def saveStudent(request):
     s = Student()
-    s.username = request.POST['Username']
-    s.password = request.POST['Password']
     s.name = request.POST['Name']
     s.address = request.POST['Address']
     s.phoneNo = request.POST['Phone']
@@ -14,9 +11,9 @@ def saveStudent(request):
     s.branch = request.POST['Branch']
     s.admissionYear = request.POST['Year']
     s.email = request.POST['Email']
-    s.isCR = 'False'
-    s.studentID = s.username
-    s.batchID = 'A6'
+    #s.isCR = null
+    #s.studentID = null
+    #s.batchID = null
     s.save()
     response = HttpResponse("Student Saved")
     response["Access-Control-Allow-Origin"] = "*"
@@ -24,8 +21,6 @@ def saveStudent(request):
 
 def saveTeacher(request):
     t = Teacher()
-    s.username = request.POST['Username']
-    s.password = request.POST['Password']
     t.name = request.POST['Name']
     t.address = request.POST['Address']
     t.phoneNo = request.POST['Phone']
@@ -46,15 +41,13 @@ def login_user(request):
     if request.POST:
         username = request.POST.get('username')
         password = request.POST.get('password')
+
         user = authenticate(username=username,password=password)
         if user is not None:
             if user.is_active:
                 login(request, user)
-                state = 'Login Successfull'
-                return HttpResponse('Login Successfull')
+                print('Login Successfull')
             else:
-                state = 'Login Unsuccessful'
+                print('Login Unsuccessful')
         else:
-            state = 'Username/Password do not match'
-        return HttpResponse(state)
-        #return render_to_response('templates/auth.html', {'state': form}, context_instance=RequestContext(request))
+            print('Username/Password do not match')

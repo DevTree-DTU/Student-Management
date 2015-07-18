@@ -1,6 +1,9 @@
 from django.conf.urls import patterns, include, url
-from studManagement.views import hello
+from login.views import login_user, saveStudent, saveTeacher
+from django.contrib import admin
 
 urlpatterns = patterns('',
-    url(r'^hello/$', hello),
+    url(r'^login/$', login_user),
+    url(r'^registerStudent/$', saveStudent),
+    url(r'^registerTeacher/$', saveTeacher),
 )

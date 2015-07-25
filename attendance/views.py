@@ -56,8 +56,30 @@ def week_wise(request):
     date_today=datetime.datetime.now()
     date_start=date_today-datetime.timedelta(days=day_of_week)
     date_end=date_start + datetime.timedelta(days=7)
-    rollCallWeek=Attendance.objects.filter(student_ID=student_ID, subject_ID=subject.id,,updated__lte=date_end, updated__gt=date_start)
-    
+
+    studentbatch_ID=Student.batch_ID  #find students batch id
+    responseArray=[]
+    for subject in Subjects.objects.filter(batch_ID=studentbatch_ID):
+        subWisePercent={}
+        rollCallWeek=Attendance.objects.filter(student_ID=student_ID, subject_ID=subject.id,,updated__lte=date_end, updated__gt=date_start)
+        perc=0
+        for rollCall in rollCallWeek:
+            totalCalls+=rollCall.attendanceWeight
+            presentCalls+=rollCall.presentPoints
+        perc=presentCalls*100.0/totalCalls
+
+        #adding details in dictionary
+        subWisePercent['subcode']=Subject.subjectCode
+        subWisePercent['subname']=Subject.subjectName
+        subWisePercent['weekPercentage']=perc
+        responseArray.append(subWisePercent)
+
+    response = HttpResponse(json.dumps(responseArray), content_type="application/json")
+    response["Access-Control-Allow-Origin"] = "*"
+    response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+    response["Access-Control-Max-Age"] = "1000"
+    response["Access-Control-Allow-Headers"] = "*"
+    return response
 
 
 def subjectPage(request):

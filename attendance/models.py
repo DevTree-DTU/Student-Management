@@ -4,14 +4,15 @@ from login.models import Teacher, Student,Batch
 
 # Create your models here.
 class Attendance(models.Model):
-    studentID = models.ForeignKey(Student,db_index=True)  #indexing is on for studentId
-    batchID = models.ForeignKey()  #indexing is on for batchId
-    subjectID= models.ForeignKey(Subject)
-    teacherID = models.ForeignKey(Teacher)
-    date=models.DateField()
-    presentPoints=models.IntegerField()
-    attendanceWeight=models.IntegerField()
+    student_ID = models.ForeignKey(Student,db_index=True)  #indexing is on for studentId
+    batch_ID = models.ForeignKey()  #indexing is on for batchId
+    subject_ID= models.ForeignKey(Subject)
+    teacher_ID = models.ForeignKey(Teacher)
+    timestamp=models.DateTimeField(auto_now_add=True,auto_now=False)  #system set, automatically one time,no manual changes allowd
+	updated=models.DateTimeField(auto_now_add=False ,auto_now=True)  #system set, automatically updates eac time, no manual changes allowd
+    present_points=models.IntegerField()
+    weight=models.IntegerField()    #weightage of the attendance roll calll
 
 
      class Meta:
-        index_together = [['batchId', 'studentId']]  #useful for editing the attendance
+        index_together = [['batchId', 'studentId']]  #useful for speeding the editing of attendance

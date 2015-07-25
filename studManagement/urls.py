@@ -6,4 +6,5 @@ urlpatterns = patterns('',
     url(r'^login/$', login_user),
     url(r'^registerStudent/$', saveStudent),
     url(r'^registerTeacher/$', saveTeacher),
+    url(r'^admin/', include(admin.site.urls)),
 )

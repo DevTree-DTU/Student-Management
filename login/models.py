@@ -17,7 +17,6 @@ class TeacherManager(BaseUserManager):
         teacher.save(self._db)
         return teacher
 
-
 class StudentManager(BaseUserManager):
     def create_user(self, sUsername, sPassword, sName, sAddress, sPhoneNo, sEmail, sFathersName, sDOB, sIsCR, sStudentID, sBatchID, sBranch, sAdmissionYear):
         if not sUsername:
@@ -25,6 +24,15 @@ class StudentManager(BaseUserManager):
         student = self.model(username=sUsername,name=sName,address=sAddress,phoneNo=sPhoneNo,email=sEmail,fathersName=sFathersName,DOB=sDOB,isCR=sIsCR,studentID=sStudentID,batchID=sBatchID,branch=sBranch,admissionYear=sAdmissionYear)
         student.set_password(sPassword)
         student.is_active=True
+        student.save(self._db)
+        return student
+    def create_superuser(self, sUsername, sPassword, sName, sPhoneNo):
+        if not sUsername:
+            raise ValueError('Username Required')
+        student = self.model(username=sUsername, name=sName, phoneNo = sPhoneNo)
+        student.set_password(sPassword)
+        student.is_admin = True
+        student.is_active = True
         student.save(self._db)
         return student
 
@@ -97,20 +105,21 @@ class Teacher(AbstractBaseUser):
 class Post(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
 
-class Student(AbstractBaseUser):
+class Student(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=50,unique=True)
     name = models.CharField(max_length=50)
-    address = models.CharField(max_length=100)
+    address = models.CharField(max_length=100, null=True)
     phoneNo = models.BigIntegerField()
-    email = models.EmailField(unique=True)
-    fathersName = models.CharField(max_length=50)
-    DOB = models.DateField()
-    isCR = models.BooleanField()
+    email = models.EmailField(unique=True, null=True)
+    fathersName = models.CharField(max_length=50, null=True)
+    DOB = models.DateField(null=True)
+    isCR = models.NullBooleanField()
+    is_admin = models.BooleanField(default=False)
     #password
-    studentID = models.CharField(max_length=50)
-    batchID = models.CharField(max_length=50)
-    branch = models.CharField(max_length=30)
-    admissionYear = models.CharField(max_length=10)
+    studentID = models.CharField(max_length=50, null=True)
+    batchID = models.CharField(max_length=50, null=True)
+    branch = models.CharField(max_length=30, null=True)
+    admissionYear = models.CharField(max_length=10, null=True)
     objects=StudentManager()
     USERNAME_FIELD='username'
     REQUIRED_FIELDS=['name','phoneNo']
@@ -123,7 +132,7 @@ class Student(AbstractBaseUser):
         return self.email
 
     def __unicode__(self):
-        return self.email
+        return self.username
 
     def has_perm(self, perm, obj=None):
         # Handle whether the user has a specific permission?"

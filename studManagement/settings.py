@@ -37,7 +37,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 #    'django.middleware.security.SecurityMiddleware',
-    'login.models.RequestMiddleware'
+#    'login.models.RequestMiddleware'
 )
 
 ROOT_URLCONF = 'studManagement.urls'

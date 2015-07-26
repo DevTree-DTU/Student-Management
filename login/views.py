@@ -50,13 +50,13 @@ def login_user(request):
             if user.is_active:
                 login(request, user)
                 response = HttpResponse('Login Successful')
-                response["Access-Control-Allow-Origin"]
+                response["Access-Control-Allow-Origin"] = "*"
                 return response
             else:
                 response = HttpResponse('Login Unsuccessful')
-                response["Access-Control-Allow-Origin"]
+                response["Access-Control-Allow-Origin"] = "*"
                 return response
         else:
-            response = HttpResponse('Login Unsuccessful')
-            response["Access-Control-Allow-Origin"]
+            response = HttpResponse('Username not found')
+            response["Access-Control-Allow-Origin"] = "*"
             return response

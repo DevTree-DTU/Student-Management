@@ -4,7 +4,6 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-
 class TeacherManager(BaseUserManager):
     def create_user(self, tPassword, tUsername, tName, tAddress, tDepartment, tRoomNo, tDesignation, tExpertise, tPhoneNo, tEmail, tDateOfJoining, tIsHOD):
         if not tUsername:

@@ -1,4 +1,3 @@
-from django.shortcuts import render, render_to_response
 from django.contrib.auth import authenticate, login, get_user_model
 from django.http import HttpResponse
 from login.models import Student, Teacher
@@ -50,11 +49,14 @@ def login_user(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                state = 'Login Successfull'
-                return HttpResponse('Login Successfull')
+                response = HttpResponse('Login Successful')
+                response["Access-Control-Allow-Origin"]
+                return response
             else:
-                state = 'Login Unsuccessful'
+                response = HttpResponse('Login Unsuccessful')
+                response["Access-Control-Allow-Origin"]
+                return response
         else:
-            state = 'Username/Password do not match'
-        return HttpResponse(state)
-        #return render_to_response('templates/auth.html', {'state': form}, context_instance=RequestContext(request))
+            response = HttpResponse('Login Unsuccessful')
+            response["Access-Control-Allow-Origin"]
+            return response

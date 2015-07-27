@@ -5,40 +5,36 @@ from django.shortcuts import render
 import json
 from login.models import Teacher, Student,Batch
 
-def percentageCalc(listOfRollCalls):
+def percentageRoll(listOfRollCalls):
     totalCalls=0
     presentCalls=0
-    recentPresentCalls=0  #stores last complete months attendance.
-    recentTotalCalls=0
-
-    previousMonth=datetime.date.today().month - 1   #previous month
-
-    for rollCall in listOfRollCalls
+    for rollCall in listOfRollCalls:
         totalCalls+=rollCall.attendanceWeight
         presentCalls+=rollCall.presentPoints
-        if rollCall.date.month==previousMonth:
-            recentTotalCalls+=rollCall.attendanceWeight
-            recentPresentCalls+=rollCall.presentPoints
-    return (recentPresentCalls*100.0/recentTotalCalls,presentCalls*100.0/totalCalls)  #overall, lastmonth
+    return presentCalls*100.0/totalCalls
 
 @login_required
 def home(request):
     #if student, either by database checking or checking post data, yet to be decided.
 
         #returning average overall and last month attendance, and list of subjects for home page.
-
+        previousMonth=datetime.date.today().month - 1   #previous month
         studentbatch_ID=Student.batch_ID  #find students batch id
         responseArray=[]
         for subject in Subjects.objects.filter(batch_ID=studentbatch_ID):
             subWisePercent={}
-            allRollCalls=Attendance.objects.filter(student_ID=student_ID, subject_ID=subject.id)
-            percentages=percentageCalc(allRollCalls)
+            allRollCalls=Attendance.objects.filter(student_ID= student_ID, subject_ID=subject.id)
+            lastMonthRollCalls=Attendance.objects.filter(student_ID= student_ID, subject_ID=subject.id, timestamp.month = previousMonth)
+            percentOverall=percentageRoll(allRollCalls)
+            percentLastMonth=percentageRoll(lastMonthRollCalls)
             #adding details in dictionary
             subWisePercent['subcode']=Subject.subjectCode
             subWisePercent['subname']=Subject.subjectName
-            subWisePercent['monthlyPercentage']=percentages[0]
-            subWisePercent['TotalPercentage']=percentages[1]
+            subWisePercent['monthlyPercentage']=percentLastMonth
+            subWisePercent['TotalPercentage']=percentOverall
             responseArray.append(subWisePercent)
+
+
     #elif teacher
 
         #to show teachers time table. Send whic classes attendance is done and whose is left.
@@ -52,21 +48,18 @@ def home(request):
 
 @login_required
 def week_wise(request):
-    day_of_week=datetime.datetime.now().isocalendar()[2] #Monday=0, Sunday=7
-    date_today=datetime.datetime.now()
-    date_start=date_today-datetime.timedelta(days=day_of_week)
-    date_end=date_start + datetime.timedelta(days=7)
+    day_of_week=datetime.datetime.now().isocalendar()[2] #Monday=0, Sunday=7 #gives today's day
+    date_today=datetime.datetime.now()  #today's date
+    date_start=date_today-datetime.timedelta(days=day_of_week)  #starting of the week
+    date_end=date_start + datetime.timedelta(days=7) #
 
     studentbatch_ID=Student.batch_ID  #find students batch id
     responseArray=[]
     for subject in Subjects.objects.filter(batch_ID=studentbatch_ID):
         subWisePercent={}
-        rollCallWeek=Attendance.objects.filter(student_ID=student_ID, subject_ID=subject.id,,updated__lte=date_end, updated__gt=date_start)
+        rollCallWeek=Attendance.objects.filter(student_ID=student_ID, subject_ID=subject.id, updated__lte=date_end, updated__gt=date_start)
         perc=0
-        for rollCall in rollCallWeek:
-            totalCalls+=rollCall.attendanceWeight
-            presentCalls+=rollCall.presentPoints
-        perc=presentCalls*100.0/totalCalls
+        perc=percentageRoll(rollCallWeek)
 
         #adding details in dictionary
         subWisePercent['subcode']=Subject.subjectCode
@@ -82,8 +75,18 @@ def week_wise(request):
     return response
 
 
+@login_required
+def month_wise(request):
+    pass
+
+@login_required
+def date_wise(request):
+    pass
+
+@login_required
 def subjectPage(request):
     pass
+
 @login_required
 def rollCallForBatch(request):
     #selectBatch

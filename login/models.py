@@ -3,7 +3,7 @@
 
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import AbstractUser, AbstractBaseUser, BaseUserManager, PermissionsMixin
 class TeacherManager(BaseUserManager):
     def create_user(self, tPassword, tUsername, tName, tAddress, tDepartment, tRoomNo, tDesignation, tExpertise, tPhoneNo, tEmail, tDateOfJoining, tIsHOD):
         if not tUsername:
@@ -21,7 +21,7 @@ class StudentManager(BaseUserManager):
         if not sUsername:
             raise ValueError('Student Username Required')
         student = self.model(username=sUsername,name=sName,address=sAddress,phoneNo=sPhoneNo,email=sEmail,fathersName=sFathersName,DOB=sDOB,isCR=sIsCR,studentID=sStudentID,batchID=sBatchID,branch=sBranch,admissionYear=sAdmissionYear)
-        student.set_password(sPassword)
+        student.set_password(self.cleaned_data[sPassword])
         student.is_active=True
         student.save(self._db)
         return student
@@ -29,7 +29,7 @@ class StudentManager(BaseUserManager):
         if not sUsername:
             raise ValueError('Username Required')
         student = self.model(username=sUsername, name=sName, phoneNo = sPhoneNo)
-        student.set_password(sPassword)
+        student.set_password(self.cleaned_data[sPassword])
         student.is_admin = True
         student.is_active = True
         student.save(self._db)
@@ -86,7 +86,7 @@ class Teacher(AbstractBaseUser):
         return self.email
 
     def __unicode__(self):
-        return self.email
+        return self.name
 
     def has_perm(self, perm, obj=None):
         # Handle whether the user has a specific permission?"
@@ -131,7 +131,7 @@ class Student(AbstractBaseUser, PermissionsMixin):
         return self.email
 
     def __unicode__(self):
-        return self.username
+        return self.name
 
     def has_perm(self, perm, obj=None):
         # Handle whether the user has a specific permission?"
@@ -164,7 +164,7 @@ class Assignment(AbstractBaseUser):
         return self.email
 
     def __unicode__(self):
-        return self.email
+        return self.url
 
     def has_perm(self, perm, obj=None):
         # Handle whether the user has a specific permission?"
@@ -202,7 +202,7 @@ class TimeTable(AbstractBaseUser):
         return self.email
 
     def __unicode__(self):
-        return self.email
+        return self.batchID
 
     def has_perm(self, perm, obj=None):
         # Handle whether the user has a specific permission?"
@@ -236,8 +236,7 @@ class Batch(AbstractBaseUser):
         return self.email
 
     def __unicode__(self):
-
-        return self.email
+        return self.batchID
     def has_perm(self, perm, obj=None):
         # Handle whether the user has a specific permission?"
         return True

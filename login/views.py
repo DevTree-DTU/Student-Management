@@ -120,3 +120,57 @@ def login_user(request):
         response["Access-Control-Allow-Origin"] = "*"
         response["Access-Control-Allow-Headers"] = "*"
         return response
+
+def getStudents(request):
+    batch = ''
+    if request.POST:
+        batch = request.POST.get('batch')
+        try:
+            responseArray = []
+            flag = 10
+            for student in Student.objects.all():
+                if student.batchID == batch:
+                    if flag == 10:
+                        data = {}
+                        data['Status'] = 1
+                        data['Description'] = 'Successful'
+                        responseArray.append(data)
+                        flag = 1
+                    data = {}
+                    data['Name'] = student.name
+                    data['Address'] = student.address
+                    data['PhoneNo'] = student.phoneNo
+                    data['Email'] = student.email
+                    data['FathersName'] = student.fathersName
+                    data['DOB'] = str(student.DOB)
+                    data['BatchID'] = student.batchID
+                    data['Branch'] = student.branch
+                    data['AdmissionYear'] = student.admissionYear
+                    responseArray.append(data)
+            if flag != 1:
+                data = {}
+                data['Status'] = 0
+                data['Description'] = 'No Student Found'
+                responseArray.append(data)
+            response = HttpResponse(json.dumps(responseArray), content_type="application/json")
+            response["Access-Control-Allow-Origin"] = "*"
+            response["Access-Control-Allow-Headers"] = "*"
+            return response
+        except Exception as e:
+            data = {}
+            data['Status'] = 0
+            data['Description'] = str(e)
+            #responseArray.append(data)
+            response = HttpResponse(json.dumps(data), content_type="application/json")
+            response["Access-Control-Allow-Origin"] = "*"
+            response["Access-Control-Max-Age"] = "1000"
+            response["Access-Control-Allow-Headers"] = "*"
+            return response
+    else:
+        data = {}
+        data['Status'] = int(0)
+        data['Description'] = 'POST Requests only'
+        response = HttpResponse(json.dumps(data), content_type="application/json")
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Headers"] = "*"
+        return response

@@ -5,13 +5,24 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, AbstractBaseUser, BaseUserManager, PermissionsMixin
 class TeacherManager(BaseUserManager):
-    def create_user(self, tPassword, tUsername, tName, tAddress, tDepartment, tRoomNo, tDesignation, tExpertise, tPhoneNo, tEmail, tDateOfJoining, tIsHOD):
+    def create_user(self, tPassword, tUsername, tName, tAddress, tDepartment, tRoomNo, tDesignation, tExpertise, tPhoneNo, tEmail, tDateOfJoining, tIsHOD, tIsAdmin, tIsSuperuser):
         if not tUsername:
             raise ValueError('Teacher Username Required')
-
         teacher = self.model(username=tUsername, name = tName, address = tAddress, department = tDepartment,roomNo = tRoomNo, designation = tDesignation,
         expertise = tExpertise, phoneNo = tPhoneNo, email = tEmail, dateOfJoining = tDateOfJoining, isHOD = tIsHOD)
         teacher.set_password(tPassword)
+        teacher.is_active = True
+        if(tIsAdmin == True):
+            t.is_admin = True
+        teacher.save(self._db)
+        return teacher
+    def create_superuser(self, tPassword, tUsername, tName, tAddress, tDepartment, tRoomNo, tDesignation, tExpertise, tPhoneNo, tEmail, tDateOfJoining, tIsHOD):
+        if not tUsername:
+            raise ValueError('Username Required')
+        teacher = self.model(username=tUsername, name = tName, address = tAddress, department = tDepartment,roomNo = tRoomNo, designation = tDesignation,
+        expertise = tExpertise, phoneNo = tPhoneNo, email = tEmail, dateOfJoining = tDateOfJoining, isHOD = tIsHOD)
+        teacher.set_password(tPassword)
+        teacher.is_admin = True
         teacher.is_active = True
         teacher.save(self._db)
         return teacher
@@ -23,15 +34,6 @@ class StudentManager(BaseUserManager):
         student = self.model(username=sUsername,name=sName,address=sAddress,phoneNo=sPhoneNo,email=sEmail,fathersName=sFathersName,DOB=sDOB,isCR=sIsCR,studentID=sStudentID,batchID=sBatchID,branch=sBranch,admissionYear=sAdmissionYear)
         student.set_password(self.cleaned_data[sPassword])
         student.is_active=True
-        student.save(self._db)
-        return student
-    def create_superuser(self, sUsername, sPassword, sName, sPhoneNo):
-        if not sUsername:
-            raise ValueError('Username Required')
-        student = self.model(username=sUsername, name=sName, phoneNo = sPhoneNo)
-        student.set_password(self.cleaned_data[sPassword])
-        student.is_admin = True
-        student.is_active = True
         student.save(self._db)
         return student
 
@@ -62,7 +64,7 @@ class BatchManager(BaseUserManager):
         batch.save(self._db)
         return batch
 
-class Teacher(AbstractBaseUser):
+class Teacher(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=50,unique=True)
     name = models.CharField(max_length=50)
     address = models.CharField(max_length=100)
@@ -74,6 +76,7 @@ class Teacher(AbstractBaseUser):
     email = models.EmailField()
     dateOfJoining = models.DateField()
     isHOD = models.BooleanField()
+    is_admin = models.BooleanField(default=False)
     objects=TeacherManager()
     USERNAME_FIELD='username'
     REQUIRED_FIELDS=['name','phoneNo','email']
@@ -104,7 +107,7 @@ class Teacher(AbstractBaseUser):
 class Post(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
 
-class Student(AbstractBaseUser, PermissionsMixin):
+class Student(AbstractBaseUser):
     username = models.CharField(max_length=50,unique=True)
     name = models.CharField(max_length=50)
     address = models.CharField(max_length=100, null=True)
@@ -114,7 +117,6 @@ class Student(AbstractBaseUser, PermissionsMixin):
     DOB = models.DateField(null=True)
     isCR = models.NullBooleanField()
     is_admin = models.BooleanField(default=False)
-    #password
     studentID = models.CharField(max_length=50, null=True)
     batchID = models.CharField(max_length=50, null=True)
     branch = models.CharField(max_length=30, null=True)
@@ -253,7 +255,7 @@ class Batch(AbstractBaseUser):
 
 class RequestMiddleware(object):
     def process_request(self,request):
-        agent = request.POST.get('agent', 'Student')
+        agent = request.POST.get('agent', 'Teacher')
         if agent == 'Student':
             settings.AUTH_USER_MODEL='login.Student'
         elif agent == 'Teacher':

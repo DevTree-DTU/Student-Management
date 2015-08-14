@@ -37,12 +37,12 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'login.models.RequestMiddleware'
+#    'login.models.RequestMiddleware'
 )
 
 ROOT_URLCONF = 'studManagement.urls'
 
-AUTH_USER_MODEL='login.Student'
+AUTH_USER_MODEL='login.Teacher'
 
 TEMPLATES = [
     {
